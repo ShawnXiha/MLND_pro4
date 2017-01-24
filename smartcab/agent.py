@@ -20,7 +20,7 @@ class LearningAgent(Agent):
         self.Q = dict()          # Create a Q-table which will be a dictionary of tuples
         self.epsilon = epsilon   # Random exploration factor
         self.alpha = alpha       # Learning factor
-
+        self.t = 0
 
 
     def reset(self, destination=None, testing=False):
@@ -37,7 +37,9 @@ class LearningAgent(Agent):
         # Update epsilon using a decay function of your choice
         # Update additional class parameters as needed
         # If 'testing' is True, set epsilon and alpha to 0
-        self.epsilon -= 0.002
+        # self.epsilon -= 0.002
+        self.t += 1
+        self.epsilon = pow(0.99,self.t)
         if testing:
             epsilon = 0
             alpha = 0
@@ -93,7 +95,7 @@ class LearningAgent(Agent):
         if self.learning and not state in self.Q:
             self.Q[state] = {}
             for act in self.valid_actions:
-                self.Q[state][act] = 0
+                self.Q[state][act] = 0.0
 
 
 
@@ -119,7 +121,9 @@ class LearningAgent(Agent):
                 action = choice(self.valid_actions)
             else:
                 bestA, maxQ = self.get_maxQ(state)
-                action = bestA
+                Qs= self.Q[state]
+                possible_actions = [action for action, value in Qs.items() if value == maxQ]
+                action = choice(possible_actions)
         else:
             action = choice(self.valid_actions)
 
@@ -137,13 +141,8 @@ class LearningAgent(Agent):
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
         if self.learning:
-            currentQ = self.Q[state][action]
-
-            if currentQ is 0:
-                self.Q[state][action] = reward
-            else:
-                self.Q[state][action] = (reward - currentQ)*self.alpha + currentQ*(1-self.alpha)
-
+            old_value = self.Q[state][action]
+            self.Q[state][action] += self.alpha * reward - old_value
 
     def update(self):
         """ The update function is called when a time step is completed in the 
@@ -198,7 +197,7 @@ def run():
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test=500,tolerance=0.001)
+    sim.run(n_test=300)
 
 
 if __name__ == '__main__':
