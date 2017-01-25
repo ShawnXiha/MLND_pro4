@@ -39,7 +39,8 @@ class LearningAgent(Agent):
         # If 'testing' is True, set epsilon and alpha to 0
         # self.epsilon -= 0.002
         self.t += 1
-        self.epsilon = pow(0.99,self.t)
+        self.epsilon = math.pow(0.99,self.t)
+
         if testing:
             epsilon = 0
             alpha = 0
@@ -92,7 +93,7 @@ class LearningAgent(Agent):
         # When learning, check if the 'state' is not in the Q-table
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
-        if self.learning and not state in self.Q:
+        if self.learning and state not in self.Q:
             self.Q[state] = {}
             for act in self.valid_actions:
                 self.Q[state][act] = 0.0
@@ -141,8 +142,8 @@ class LearningAgent(Agent):
         # When learning, implement the value iteration update rule
         #   Use only the learning rate 'alpha' (do not use the discount factor 'gamma')
         if self.learning:
-            old_value = self.Q[state][action]
-            self.Q[state][action] += self.alpha * reward - old_value
+            old_Q = self.Q[state][action]
+            self.Q[state][action] += self.alpha * reward - old_Q
 
     def update(self):
         """ The update function is called when a time step is completed in the 
