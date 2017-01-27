@@ -23,6 +23,8 @@ class LearningAgent(Agent):
         self.t = 0
 
 
+
+
     def reset(self, destination=None, testing=False):
         """ The reset function is called at the beginning of each trial.
             'testing' is set to True if testing trials are being used
@@ -63,9 +65,7 @@ class LearningAgent(Agent):
         ###########
         # Set 'state' as a tuple of relevant data for the agent
 
-        inputs["waypoint"] = waypoint
-        del inputs['right']
-        state = tuple(inputs.values())
+        state = (waypoint,inputs['light'], inputs['oncoming'], inputs['left'], inputs['right'])
 
         return state
 
@@ -189,14 +189,14 @@ def run():
     #   display      - set to False to disable the GUI if PyGame is enabled
     #   log_metrics  - set to True to log trial and simulation results to /logs
     #   optimized    - set to True to change the default log file name
-    sim = Simulator(env, update_delay=0.000000001,log_metrics=True,display=False,optimized=True)
+    sim = Simulator(env, update_delay=0.00000000001,log_metrics=True,display=False,optimized=True)
     
     ##############
     # Run the simulator
     # Flags:
     #   tolerance  - epsilon tolerance before beginning testing, default is 0.05 
     #   n_test     - discrete number of testing trials to perform, default is 0
-    sim.run(n_test=20,tolerance = 0.08)
+    sim.run(n_test=20,tolerance = 0.005)
 
 
 if __name__ == '__main__':
